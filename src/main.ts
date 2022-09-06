@@ -78,7 +78,7 @@ async function run(): Promise<void> {
       base: { ref: baseBranch },
       head: { ref: headBranch },
       number: prNumber = 0,
-      body: prBody,
+      body: prBody = '',
       additions = 0,
       title = '',
     } = pullRequest as PullRequestParams;
