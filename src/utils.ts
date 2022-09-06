@@ -120,7 +120,7 @@ export const updatePrDetails = async (client, prData): Promise<void> => {
     const { owner, repo, pull_number } = prData;
     const existingPr = await client.pulls.get({ owner, repo, pull_number });
 
-    if (existingPr.body) {
+    if (existingPr?.body) {
       prData.body = `${existingPr.body} <br/> ${prData.body}`;
     }
 
