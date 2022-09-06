@@ -117,6 +117,13 @@ export const addLabels = async (client, labelData): Promise<void> => {
 /** Update a PR details. */
 export const updatePrDetails = async (client, prData): Promise<void> => {
   try {
+    const { owner, repo, pull_number } = prData;
+    const existingPr = await client.pulls.get({ owner, repo, pull_number });
+
+    if (existingPr.body) {
+      prData.body = `${existingPr.body} <br/> ${prData.body}`;
+    }
+
     await client.pulls.update(prData);
   } catch (error) {
     core.setFailed((error as any).message);
