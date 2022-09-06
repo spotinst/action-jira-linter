@@ -62,11 +62,20 @@
       "contributions": [
         "code"
       ]
+    },
+    {
+      "login": "harrygillingham99",
+      "name": "Harry Gillingham",
+      "avatar_url": "https://avatars.githubusercontent.com/u/52282395?v=4",
+      "profile": "https://github.com/harrygillingham99",
+      "contributions": [
+        "code"
+      ]
     }
   ],
   "contributorsPerLine": 7,
   "projectName": "jira-lint",
-  "projectOwner": "ClearTax",
+  "projectOwner": "amigo-loans",
   "repoType": "github",
   "repoHost": "https://github.com",
   "skipCi": true,

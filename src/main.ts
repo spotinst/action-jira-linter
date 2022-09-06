@@ -1,6 +1,5 @@
 import * as core from '@actions/core';
-import * as github from '@actions/github';
-import { PullsUpdateParams, IssuesCreateCommentParams } from '@octokit/rest';
+import { getOctokit, context } from '@actions/github';
 
 import {
   addComment,
@@ -67,7 +66,7 @@ async function run(): Promise<void> {
         organization: { login: owner },
         pull_request: pullRequest,
       },
-    } = github.context;
+    } = context;
 
     if (typeof repository === 'undefined') {
       throw new Error(`Missing 'repository' from github action context.`);
@@ -88,16 +87,15 @@ async function run(): Promise<void> {
     const commonPayload = {
       owner,
       repo,
-      // eslint-disable-next-line @typescript-eslint/camelcase
       issue_number: prNumber,
     };
 
     // github client with given token
-    const client: github.GitHub = new github.GitHub(GITHUB_TOKEN);
+    const client = getOctokit(GITHUB_TOKEN);
 
     if (!headBranch && !baseBranch) {
       const commentBody = 'jira-lint is unable to determine the head and base branch';
-      const comment: IssuesCreateCommentParams = {
+      const comment = {
         ...commonPayload,
         body: commentBody,
       };
@@ -116,7 +114,7 @@ async function run(): Promise<void> {
 
     const issueKeys = getJIRAIssueKeys(headBranch);
     if (!issueKeys.length) {
-      const comment: IssuesCreateCommentParams = {
+      const comment = {
         ...commonPayload,
         body: getNoIdComment(headBranch),
       };
@@ -145,7 +143,7 @@ async function run(): Promise<void> {
       });
 
       if (!isIssueStatusValid(VALIDATE_ISSUE_STATUS, ALLOWED_ISSUE_STATUSES.split(','), details)) {
-        const invalidIssueStatusComment: IssuesCreateCommentParams = {
+        const invalidIssueStatusComment = {
           ...commonPayload,
           body: getInvalidIssueStatusComment(details.status, ALLOWED_ISSUE_STATUSES),
         };
@@ -157,10 +155,9 @@ async function run(): Promise<void> {
       }
 
       if (shouldUpdatePRDescription(prBody)) {
-        const prData: PullsUpdateParams = {
+        const prData = {
           owner,
           repo,
-          // eslint-disable-next-line @typescript-eslint/camelcase
           pull_number: prNumber,
           body: getPRDescription(prBody, details),
         };
@@ -168,7 +165,7 @@ async function run(): Promise<void> {
 
         // add comment for PR title
         if (!SKIP_COMMENTS) {
-          const prTitleComment: IssuesCreateCommentParams = {
+          const prTitleComment = {
             ...commonPayload,
             body: getPRTitleComment(details.summary, title),
           };
@@ -177,7 +174,7 @@ async function run(): Promise<void> {
 
           // add a comment if the PR is huge
           if (isHumongousPR(additions, prThreshold)) {
-            const hugePrComment: IssuesCreateCommentParams = {
+            const hugePrComment = {
               ...commonPayload,
               body: getHugePrComment(additions, prThreshold),
             };
@@ -187,7 +184,7 @@ async function run(): Promise<void> {
         }
       }
     } else {
-      const comment: IssuesCreateCommentParams = {
+      const comment = {
         ...commonPayload,
         body: getNoIdComment(headBranch),
       };
@@ -198,7 +195,7 @@ async function run(): Promise<void> {
     }
   } catch (error) {
     console.log({ error });
-    core.setFailed(error.message);
+    core.setFailed((error ).message);
     process.exit(1);
   }
 }

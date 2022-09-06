@@ -15,8 +15,9 @@ import {
 } from '../src/utils';
 import { HIDDEN_MARKER } from '../src/constants';
 import { JIRADetails } from '../src/types';
+import { expect, jest } from '@jest/globals';
 
-jest.spyOn(console, 'log').mockImplementation(); // avoid actual console.log in test output
+jest.spyOn(console, 'log').mockImplementation(() => {}); // avoid actual console.log in test output
 
 describe('shouldSkipBranchLint()', () => {
   it('should recognize bot PRs', () => {
@@ -173,6 +174,10 @@ some actual content'
 `)
     ).toBeTruthy();
   });
+
+  it('should return true when the pull request body is undefined', () => {
+    expect(shouldUpdatePRDescription(undefined)).toBe(true);
+  });
 });
 
 describe('getPRDescription()', () => {
@@ -194,6 +199,26 @@ describe('getPRDescription()', () => {
     expect(description).toContain(issue.estimate);
     expect(description).toContain(issue.status);
     expect(description).toContain(issue.labels[0].name);
+    expect(description).toContain('---');
+    expect(description).toContain('some_body');
+  });
+
+  it('should include the jira details when the pull request body is undefined', () => {
+    const issue: JIRADetails = {
+      key: 'ABC-123',
+      url: 'url',
+      type: { name: 'feature', icon: 'feature-icon-url' },
+      estimate: 1,
+      labels: [{ name: 'frontend', url: 'frontend-url' }],
+      summary: 'Story title or summary',
+      project: { name: 'project', url: 'project-url', key: 'abc' },
+      status: 'In Progress',
+    };
+
+    const description = getPRDescription(undefined, issue);
+
+    expect(description).toContain(issue.key);
+    expect(description).not.toContain('---');
   });
 });
 
@@ -238,7 +263,7 @@ describe('getLabelsForDisplay()', () => {
 describe('JIRA Client', () => {
   // use this to test if the token is correct
   it.skip('should be able to access the issue', async () => {
-    const client = getJIRAClient('https://cleartaxtech.atlassian.net/', '<token_here>');
+    const client = getJIRAClient('https://amigoloans.atlassian.net/', '<token_here>');
     const details = await client.getTicketDetails('ES-10');
     console.log({ details });
     expect(details).not.toBeNull();

@@ -1,8 +1,6 @@
 import axios from 'axios';
 import * as core from '@actions/core';
-import * as github from '@actions/github';
 import similarity from 'string-similarity';
-import { IssuesAddLabelsParams, PullsUpdateParams, IssuesCreateCommentParams } from '@octokit/rest';
 import {
   MARKER_REGEX,
   BOT_BRANCH_PATTERNS,
@@ -107,31 +105,31 @@ export const getJIRAClient = (baseURL: string, token: string): JIRAClient => {
 };
 
 /** Add the specified label to the PR. */
-export const addLabels = async (client: github.GitHub, labelData: IssuesAddLabelsParams): Promise<void> => {
+export const addLabels = async (client, labelData): Promise<void> => {
   try {
     await client.issues.addLabels(labelData);
   } catch (error) {
-    core.setFailed(error.message);
+    core.setFailed((error ).message);
     process.exit(1);
   }
 };
 
 /** Update a PR details. */
-export const updatePrDetails = async (client: github.GitHub, prData: PullsUpdateParams): Promise<void> => {
+export const updatePrDetails = async (client, prData): Promise<void> => {
   try {
     await client.pulls.update(prData);
   } catch (error) {
-    core.setFailed(error.message);
+    core.setFailed((error ).message);
     process.exit(1);
   }
 };
 
 /** Add a comment to a PR. */
-export const addComment = async (client: github.GitHub, comment: IssuesCreateCommentParams): Promise<void> => {
+export const addComment = async (client, comment): Promise<void> => {
   try {
     await client.issues.createComment(comment);
   } catch (error) {
-    core.setFailed(error.message);
+    core.setFailed((error ).message);
   }
 };
 
@@ -230,7 +228,7 @@ export const shouldSkipBranchLint = (branch: string, additionalIgnorePattern?: s
 export const shouldUpdatePRDescription = (
   /** The PR description/body as a string. */
   body?: string
-): boolean => typeof body === 'string' && !MARKER_REGEX.test(body);
+): boolean => (body ? !MARKER_REGEX.test(body) : true);
 
 /**
  * Get links to labels & remove spacing so the table works.
@@ -282,9 +280,14 @@ export const getPRDescription = (body = '', details: JIRADetails): string => {
   ${HIDDEN_MARKER}
 -->
 
+${
+  body
+    ? `
 ---
-
-${body}`;
+${body}
+`
+    : ''
+}`;
 };
 
 /** Check if a PR is considered "huge". */

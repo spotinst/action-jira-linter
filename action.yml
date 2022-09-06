@@ -1,6 +1,6 @@
 name: 'jira-lint'
 description: 'Add JIRA issue details to your GitHub pull request.'
-author: 'cleartax'
+author: 'amigo-loans'
 inputs:
   github-token:
     description: 'Token used to update PR description and add labels. Can be passed in using {{ secrets.GITHUB_TOKEN }}'
