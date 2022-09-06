@@ -117,15 +117,6 @@ export const addLabels = async (client, labelData): Promise<void> => {
 /** Update a PR details. */
 export const updatePrDetails = async (client, prData): Promise<void> => {
   try {
-    const { owner, repo, pull_number } = prData;
-    const existingPr = JSON.parse(await client.pulls.get({ owner, repo, pull_number }));
-    console.log(`existing PR = ${JSON.parse(existingPr).body}`);
-
-    if (existingPr?.body !== undefined) {
-      console.log('Found existing PR body. Appending JIRA details.');
-      prData.body = `${existingPr.body} <br/> ${prData.body}`;
-    }
-
     await client.pulls.update(prData);
   } catch (error) {
     core.setFailed((error as any).message);

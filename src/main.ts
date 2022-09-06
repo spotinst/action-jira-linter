@@ -78,7 +78,7 @@ async function run(): Promise<void> {
       base: { ref: baseBranch },
       head: { ref: headBranch },
       number: prNumber = 0,
-      body: prBody = '',
+      body: prBody,
       additions = 0,
       title = '',
     } = pullRequest as PullRequestParams;
@@ -156,6 +156,7 @@ async function run(): Promise<void> {
       }
 
       if (shouldUpdatePRDescription(prBody)) {
+        console.log(`Updating PR Body with JIRA Details: ${prBody}`);
         const prData = {
           owner,
           repo,
