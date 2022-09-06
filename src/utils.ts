@@ -119,7 +119,7 @@ export const updatePrDetails = async (client, prData): Promise<void> => {
   try {
     const { owner, repo, pull_number } = prData;
     const existingPr = await client.pulls.get({ owner, repo, pull_number });
-    console.log(`existing PR = ${JSON.stringify(existingPr)}`);
+    console.log(`existing PR = ${existingPr.body}`);
 
     if (existingPr?.body !== undefined) {
       console.log('Found existing PR body. Appending JIRA details.');
