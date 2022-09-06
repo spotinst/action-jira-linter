@@ -1,5 +1,5 @@
 import * as core from '@actions/core';
-import { getOctokit, context } from '@actions/github';
+import * as github from '@actions/github';
 
 import {
   addComment,
@@ -66,7 +66,7 @@ async function run(): Promise<void> {
         organization: { login: owner },
         pull_request: pullRequest,
       },
-    } = context;
+    } = github.context;
 
     if (typeof repository === 'undefined') {
       throw new Error(`Missing 'repository' from github action context.`);
@@ -91,7 +91,7 @@ async function run(): Promise<void> {
     };
 
     // github client with given token
-    const client = getOctokit(GITHUB_TOKEN);
+    const client = new github.GitHub(GITHUB_TOKEN);
 
     if (!headBranch && !baseBranch) {
       const commentBody = 'jira-lint is unable to determine the head and base branch';
