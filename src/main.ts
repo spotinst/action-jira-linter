@@ -112,6 +112,8 @@ async function run(): Promise<void> {
       process.exit(0);
     }
 
+    let resultText: string[] = [];
+
     const issueKeys = getJIRAIssueKeys(headBranch);
     if (!issueKeys.length) {
       const comment = {
@@ -150,8 +152,7 @@ async function run(): Promise<void> {
         console.log('Adding comment for invalid issue status');
         await addComment(client, invalidIssueStatusComment);
 
-        core.setFailed('The found jira issue does is not in acceptable statuses');
-        process.exit(1);
+        resultText.push('The found jira issue does is not in acceptable statuses.');
       }
 
       if (shouldUpdatePRDescription(prBody)) {
@@ -189,13 +190,19 @@ async function run(): Promise<void> {
         body: getNoIdComment(headBranch),
       };
       await addComment(client, comment);
+      resultText.push('Invalid JIRA key. Please create a branch with a valid JIRA issue key.');
+    }
 
-      core.setFailed('Invalid JIRA key. Please create a branch with a valid JIRA issue key.');
+    if (resultText.length === 0) {
+      process.exit(0);
+    } else {
+      const resultString = resultText.join(', ').trim().slice(0, -1) + '.';
+      core.setFailed(resultString);
       process.exit(1);
     }
   } catch (error) {
     console.log({ error });
-    core.setFailed((error ).message);
+    core.setFailed((error as any).message);
     process.exit(1);
   }
 }

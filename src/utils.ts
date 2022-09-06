@@ -109,7 +109,7 @@ export const addLabels = async (client, labelData): Promise<void> => {
   try {
     await client.issues.addLabels(labelData);
   } catch (error) {
-    core.setFailed((error ).message);
+    core.setFailed((error as any).message);
     process.exit(1);
   }
 };
@@ -119,7 +119,7 @@ export const updatePrDetails = async (client, prData): Promise<void> => {
   try {
     await client.pulls.update(prData);
   } catch (error) {
-    core.setFailed((error ).message);
+    core.setFailed((error as any).message);
     process.exit(1);
   }
 };
@@ -129,7 +129,7 @@ export const addComment = async (client, comment): Promise<void> => {
   try {
     await client.issues.createComment(comment);
   } catch (error) {
-    core.setFailed((error ).message);
+    core.setFailed((error as any).message);
   }
 };
 
