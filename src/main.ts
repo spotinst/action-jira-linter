@@ -172,7 +172,7 @@ async function run(): Promise<void> {
             body: getPRTitleComment(details.summary, title),
           };
           console.log('Adding comment for the PR title');
-          addComment(client, prTitleComment);
+          await addComment(client, prTitleComment);
 
           // add a comment if the PR is huge
           if (isHumongousPR(additions, prThreshold)) {
@@ -181,7 +181,7 @@ async function run(): Promise<void> {
               body: getHugePrComment(additions, prThreshold),
             };
             console.log('Adding comment for huge PR');
-            addComment(client, hugePrComment);
+            await addComment(client, hugePrComment);
           }
         }
       }
