@@ -93,6 +93,10 @@ async function run(): Promise<void> {
     // github client with given token
     const client = github.getOctokit(GITHUB_TOKEN).rest;
 
+    const existingComments = await client.issues.listComments({ ...commonPayload });
+    const commentAlreadyExists = (body: string): boolean =>
+      existingComments.data.find((a) => a.body && a.body.toLowerCase() === body.toLowerCase()) !== undefined;
+
     if (!headBranch && !baseBranch) {
       const commentBody = 'jira-lint is unable to determine the head and base branch';
       const comment = {
@@ -119,8 +123,11 @@ async function run(): Promise<void> {
         ...commonPayload,
         body: getNoIdComment(headBranch),
       };
-      await addComment(client, comment);
-
+      if (!commentAlreadyExists(comment.body)) {
+        await addComment(client, comment);
+      } else {
+        console.log('Missing JIRA issue id comment already added, skipping.');
+      }
       core.setFailed('JIRA issue id is missing in your branch.');
       process.exit(1);
     }
@@ -131,11 +138,13 @@ async function run(): Promise<void> {
 
     const { getTicketDetails } = getJIRAClient(JIRA_BASE_URL, JIRA_TOKEN);
     const details: JIRADetails = await getTicketDetails(issueKey);
+
     if (details.key) {
       const podLabel = details?.project?.name || '';
       const hotfixLabel: string = getHotfixLabel(baseBranch);
       const typeLabel: string = details?.type?.name || '';
       const labels: string[] = [podLabel, hotfixLabel, typeLabel].filter(isNotBlank);
+
       console.log('Adding lables -> ', labels);
 
       await addLabels(client, {
@@ -148,8 +157,14 @@ async function run(): Promise<void> {
           ...commonPayload,
           body: getInvalidIssueStatusComment(details.status, ALLOWED_ISSUE_STATUSES),
         };
+
         console.log('Adding comment for invalid issue status');
-        await addComment(client, invalidIssueStatusComment);
+
+        if (!commentAlreadyExists(invalidIssueStatusComment.body)) {
+          await addComment(client, invalidIssueStatusComment);
+        } else {
+          console.log('Invalid issue status comment already exists, skipping.');
+        }
 
         resultText.push('The found jira issue does is not in acceptable statuses.');
       }
@@ -170,9 +185,14 @@ async function run(): Promise<void> {
             ...commonPayload,
             body: getPRTitleComment(details.summary, title),
           };
-          console.log('Adding comment for the PR title');
-          await addComment(client, prTitleComment);
 
+          console.log('Adding comment for the PR title');
+
+          if (!commentAlreadyExists(prTitleComment.body)) {
+            await addComment(client, prTitleComment);
+          } else {
+            console.log('PR title comment already exists, skipping.');
+          }
           // add a comment if the PR is huge
           if (isHumongousPR(additions, prThreshold)) {
             const hugePrComment = {
@@ -180,7 +200,11 @@ async function run(): Promise<void> {
               body: getHugePrComment(additions, prThreshold),
             };
             console.log('Adding comment for huge PR');
-            await addComment(client, hugePrComment);
+            if (!commentAlreadyExists(hugePrComment.body)) {
+              await addComment(client, hugePrComment);
+            } else {
+              console.log('Humongous PR comment already exists, skipping.');
+            }
           }
         }
       }
@@ -189,7 +213,11 @@ async function run(): Promise<void> {
         ...commonPayload,
         body: getNoIdComment(headBranch),
       };
-      await addComment(client, comment);
+      if (!commentAlreadyExists(comment.body)) {
+        await addComment(client, comment);
+      } else {
+        console.log('invalid JIRA issue comment already exists, skipping.');
+      }
       resultText.push('Invalid JIRA key. Please create a branch with a valid JIRA issue key.');
     }
 
