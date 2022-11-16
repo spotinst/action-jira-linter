@@ -91,7 +91,7 @@ async function run(): Promise<void> {
     };
 
     // github client with given token
-    const client = new github.GitHub(GITHUB_TOKEN);
+    const client = github.getOctokit(GITHUB_TOKEN).rest;
 
     if (!headBranch && !baseBranch) {
       const commentBody = 'jira-lint is unable to determine the head and base branch';
@@ -100,7 +100,6 @@ async function run(): Promise<void> {
         body: commentBody,
       };
       await addComment(client, comment);
-
       core.setFailed('Unable to get the head and base branch');
       process.exit(1);
     }

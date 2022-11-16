@@ -130,6 +130,7 @@ export const addComment = async (client, comment): Promise<void> => {
     await client.issues.createComment(comment);
   } catch (error) {
     core.setFailed((error as any).message);
+    process.exit(1);
   }
 };
 
