@@ -13,15 +13,11 @@ import { JIRA, JIRADetails, JIRAClient } from './types';
 export const isBlank = (input: string): boolean => input.trim().length === 0;
 export const isNotBlank = (input: string): boolean => !isBlank(input);
 
-/** Reverse a string. */
-export const reverseString = (input: string): string => input.split('').reverse().join('');
-
 /** Extract JIRA issue keys from a string. */
 export const getJIRAIssueKeys = (input: string): string[] => {
-  const matches = reverseString(input).toUpperCase().match(JIRA_REGEX_MATCHER);
-  if (matches?.length) {
-    return matches.map(reverseString).reverse();
-  } else return [];
+  const matches = input.toUpperCase().match(JIRA_REGEX_MATCHER);
+
+  return matches?.length ? matches : [];
 };
 
 export const LABELS = {

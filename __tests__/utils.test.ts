@@ -88,21 +88,7 @@ describe('getJIRAIssueKeys()', () => {
       getJIRAIssueKeys(
         'BF-18 abc-123 X-88 ABCDEFGHIJKL-999 abc XY-Z-333 abcDEF-33 ABCDEF-33 abcdef-33 ABC-1 PB2-1 pb2-1 P2P-1 p2p-1'
       )
-    ).toEqual([
-      'BF-18',
-      'ABC-123',
-      'X-88',
-      'CDEFGHIJKL-999',
-      'Z-333',
-      'ABCDEF-33',
-      'ABCDEF-33',
-      'ABCDEF-33',
-      'ABC-1',
-      'PB2-1',
-      'PB2-1',
-      'P2P-1',
-      'P2P-1',
-    ]);
+    ).toEqual(['BF-18', 'P2P-1']);
   });
 
   it('gets jira key from different branch names', () => {
@@ -120,6 +106,9 @@ describe('getJIRAIssueKeys()', () => {
 
     expect(getJIRAIssueKeys('MOJO-6789/task_with_underscores-ES-43')).toEqual(['MOJO-6789', 'ES-43']);
     expect(getJIRAIssueKeys('nudge-live-chat-users-Es-172')).toEqual(['ES-172']);
+    expect(getJIRAIssueKeys('PLAT-499-add-option-to-turn-off-on-0-1-for-should-monitor-in-accounts-table')).toEqual([
+      'PLAT-499',
+    ]);
 
     expect(getJIRAIssueKeys('feature/missingKey')).toEqual([]);
     expect(getJIRAIssueKeys('')).toEqual([]);
