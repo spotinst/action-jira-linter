@@ -7,6 +7,7 @@ import {
   DEFAULT_BRANCH_PATTERNS,
   JIRA_REGEX_MATCHER,
   HIDDEN_MARKER,
+  REVERTED_BRANCH_MATCHER,
 } from './constants';
 import { JIRA, JIRADetails, JIRAClient } from './types';
 
@@ -15,7 +16,9 @@ export const isNotBlank = (input: string): boolean => !isBlank(input);
 
 /** Extract JIRA issue keys from a string. */
 export const getJIRAIssueKeys = (input: string): string[] => {
-  const matches = input.toUpperCase().match(JIRA_REGEX_MATCHER);
+  input = input.toUpperCase();
+  input = REVERTED_BRANCH_MATCHER.test(input) ? input.replace(REVERTED_BRANCH_MATCHER, '') : input;
+  const matches = input.match(JIRA_REGEX_MATCHER);
 
   return matches?.length ? matches : [];
 };

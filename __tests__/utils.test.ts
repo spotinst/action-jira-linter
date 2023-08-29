@@ -112,6 +112,9 @@ describe('getJIRAIssueKeys()', () => {
 
     expect(getJIRAIssueKeys('feature/missingKey')).toEqual([]);
     expect(getJIRAIssueKeys('')).toEqual([]);
+    expect(
+      getJIRAIssueKeys('revert-95-GCPEG-2472-gcp-dashboard-connect-instance-running-time-to-instance-usage-chart')
+    ).toEqual(['GCPEG-2472']);
   });
 });
 
