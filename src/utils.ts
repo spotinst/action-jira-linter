@@ -17,6 +17,7 @@ export const isNotBlank = (input: string): boolean => !isBlank(input);
 /** Extract JIRA issue keys from a string. */
 export const getJIRAIssueKeys = (input: string): string[] => {
   input = input.toUpperCase();
+
   input = REVERTED_BRANCH_MATCHER.test(input) ? input.replace(REVERTED_BRANCH_MATCHER, '') : input;
   const matches = input.match(JIRA_REGEX_MATCHER);
 
