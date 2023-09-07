@@ -21,6 +21,11 @@ export const DEFAULT_BRANCH_PATTERNS: RegExp[] = [/^master$/, /^production$/, /^
 export const JIRA_REGEX_MATCHER = /(^|(?<=\/))([a-zA-Z0-9]+-\d+)|([a-zA-Z0-9]+-\d+)$/g;
 
 /**
+ * Default reverted branch prefix pattern to be removed when checking for JIRA_REGEX_MATCHER
+ */
+export const REVERTED_BRANCH_MATCHER = /^revert-\d+-/gi;
+
+/**
  * Default total maximum number of additions after which jira-lint will discourage the PR as it is
  * considered "too huge to review".
  */
