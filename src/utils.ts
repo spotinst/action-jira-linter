@@ -184,9 +184,7 @@ export const getPRTitleComment = (storyTitle: string, prTitle: string): string =
     </p>
     `;
   }
-  return `<p>I'm a bot and I 👍 this PR title. 🤖</p>
-
-  <img src="https://media.giphy.com/media/XreQmk7ETCak0/giphy.gif" width="400" />`;
+  return `<p>I'm a bot and I 👍 this PR title. 🤖</p>`;
 };
 
 /**
@@ -303,7 +301,6 @@ export const getHugePrComment = (
   threshold: number
 ): string =>
   `<p>This PR is too huge for one to review :broken_heart: </p>
-  <img src="https://media.giphy.com/media/26tPskka6guetcHle/giphy.gif" width="400" />
     <table>
       <tr>
           <th>Additions</th>
